@@ -1,12 +1,8 @@
-# FourLLIE: Boosting Low-Light Image Enhancement by Fourier Frequency Information
-
+# FNONet:Boosting Low-Light Image Enhancement by Fourier Neural Operator
 ## Introduction
+This is the official pytorch implementation of "FNONet:Boosting Low-Light Image Enhancement by Fourier Neural Operator" by **Zhongchen**.
 
-This is the official pytorch implementation of "FourLLIE: Boosting Low-Light Image Enhancement by Fourier Frequency Information" **(ACM MM 2023)**
-
-![pipeline](https://github.com/wangchx67/FourLLIE/blob/main/figs/pipeline.png)
-
-We design a two-stage framework to enhance low-light images with the help of the Fourier frequency information. In the first stage, we improve the lightness of low-light images by estimating the amplitude transform map in the Fourier space. In the second stage, we introduce the Signal-to-Noise-Ratio (SNR) map to provide the prior for integrating the global Fourier frequency and the local spatial information, which recovers image details in the spatial space. With this ingenious design, FourLLIE outperforms the existing state-of-the-art (SOTA) LLIE methods on four representative datasets while maintaining good model efficiency. 
+Compared to natural scenes with ample illumination, images captured in low-light conditions typically suffer from deficiencies such as underexposure, low contrast, color inaccuracies and limited dynamic range. To enhance the perceptual quality of image in low-light environments, we addresses the limitations of capturing long-range image dependencies in existing methods, assessing the influence of different color space on low-light image enhancement. In this study, we propose FNONet, a two-stage enhancement model that leverages the YCbCr color space and feature fusion.
 
 ## Installation
 
@@ -31,25 +27,5 @@ Modify the testing configuration in `./options/test/LOLv2_real.yml` and run:
 python test.py -opt ./options/test/LOLv2_real.yml
 ```
 
-## Datasets
 
-- LOL-real and LOL-sys can be found in [here](https://github.com/flyywh/SGM-Low-Light).
-- LSRW-Huawei and LSRW-Nikon can be found in [here](https://github.com/JianghaiSCU/R2RNet).
-
-## Acknowledgement
-
-This repo is based on [SNR-Aware](https://github.com/dvlab-research/SNR-Aware-Low-Light-Enhance).
-
-## Citation Information
-
-If you find the project useful, please cite:
-
-```
-@inproceedings{wang2023fourllie,
-  title={FourLLIE: Boosting Low-Light Image Enhancement by Fourier Frequency Information},
-  author={Chenxi Wang, Hongujun Wu, and Zhi Jin},
-  booktitle={ACM MM},
-  year={2023}
-}
-```
 
