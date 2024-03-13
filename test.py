@@ -10,7 +10,7 @@ from models import create_model
 
 #### options
 parser = argparse.ArgumentParser()
-parser.add_argument('-opt', type=str, default='./options/test/LOLv2_real.yml', help='Path to options YMAL file.')
+parser.add_argument('-opt', type=str, default='./options/test/LOL_v1.yml', help='Path to options YMAL file.')
 opt = option.parse(parser.parse_args().opt, is_train=False)
 opt = option.dict_to_nonedict(opt)
 
