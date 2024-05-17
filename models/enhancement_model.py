@@ -1,5 +1,6 @@
 import logging
 from collections import OrderedDict
+
 import torch
 import torch.nn as nn
 from torch.nn.parallel import DataParallel, DistributedDataParallel
@@ -143,7 +144,7 @@ class enhancement_model(BaseModel):
         mask = torch.clamp(mask, min=0, max=1.0)
         mask = mask.float()
 
-        self.fake_H,self.fake_Amp,self.fake_H_s1= self.netG(self.var_L)
+        self.fake_H,self.fake_Amp,self.fake_H_s1,self.snr = self.netG(self.var_L)
 
         _, _, H, W = self.real_H.shape
         Y_real, Cb_real, Cr_real = rgb_to_ycbcr(self.real_H)
@@ -159,7 +160,12 @@ class enhancement_model(BaseModel):
         self.fake_Pha = torch.angle(out_fft)
 
         l_pix = self.l_pix_w * self.cri_pix(self.fake_H, self.real_H)
+        # l_pix_amp = self.l_pix_w * self.cri_pix(self.fake_H_s1, self.real_H) * 0.5
         l_amp = self.l_pix_w * self.cri_pix(self.fake_Amp, self.real_Amp) * 0.01
+        # l_Cb = self.l_pix_w * self.cri_pix(self.enhencedcb, self.Cb_real) * 0.01
+        # l_Cr = self.l_pix_w * self.cri_pix(self.enhencedcr, self.Cr_real) * 0.01
+
+        # l_pha = self.l_pix_w * self.cri_pix_ill2(self.fake_Pha, self.real_Pha) * 0.01
         l_vgg = self.l_pix_w * self.cri_vgg(self.fake_H, self.real_H) * 0.1
         l_final = l_pix + l_amp+ l_vgg # + l_amp + l_pix_amp # + l_pix_amp +l_pha # + l_vgg + l_amp
         l_final.backward()
@@ -174,7 +180,7 @@ class enhancement_model(BaseModel):
     def test(self):
         self.netG.eval()
         with torch.no_grad():
-            self.fake_H, _, self.fake_H_s1 = self.netG(self.var_L)
+            self.fake_H, _, self.fake_H_s1 ,self.snr= self.netG(self.var_L)
         self.netG.train()
 
     def get_current_log(self):
