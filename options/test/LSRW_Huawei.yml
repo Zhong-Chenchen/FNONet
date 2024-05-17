@@ -1,5 +1,5 @@
 ### must be same as
-name: LOL_v1
+name: LSRW_Huawei
 suffix: ~  # add suffix to saved images
 model: ll_dataset
 distortion: sr
@@ -10,16 +10,16 @@ gpu_ids: [0]
 datasets:
   test:  # the 1st test dataset
     name: test
-    dataroot_GT: dataset/LOLdataset/eval15/high
-    dataroot_LQ: dataset/LOLdataset/eval15/low
+    dataroot_GT: dataset/LSRW/Eval/Huawei/high
+    dataroot_LQ: dataset/LSRW/Eval/Huawei/low
 
 #### network structures
 network_G:
   which_model_G: FourLLIE_fno
-  nf: 64
+  nf: 64  # 64 #16 32 # 64
 
 #### path
 path:
   root: ./
-  pretrain_model_G: save_model/save_model_v1/314psnr26.8/93000_G.pth
+  pretrain_model_G: save_new/LSRW_huawei/fnonet/experiments/train/models/100000_G.pth
 

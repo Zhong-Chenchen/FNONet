@@ -1,5 +1,5 @@
 ### must be same as
-name: LOL_v1
+name: LOL_v2_real
 suffix: ~  # add suffix to saved images
 model: ll_dataset
 distortion: sr
@@ -10,8 +10,9 @@ gpu_ids: [0]
 datasets:
   test:  # the 1st test dataset
     name: test
-    dataroot_GT: dataset/LOLdataset/eval15/high
-    dataroot_LQ: dataset/LOLdataset/eval15/low
+    dataroot_GT: dataset/LOLv2/Real_captured/Test/Normal
+    dataroot_LQ: dataset/LOLv2/Real_captured/Test/Low
+
 
 #### network structures
 network_G:
@@ -20,6 +21,6 @@ network_G:
 
 #### path
 path:
-  root: ./
-  pretrain_model_G: save_model/save_model_v1/314psnr26.8/93000_G.pth
+  root:
+  pretrain_model_G: save_model/save_model_v2_syn/37bestpsnr27.7/38000_G.pth
 

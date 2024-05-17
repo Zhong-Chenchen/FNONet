@@ -13,8 +13,8 @@ datasets:
     interval_list: [1]
     random_reverse: false
     border_mode: false
-    dataroot_GT: dataset/LOLv1/Train/target
-    dataroot_LQ: dataset/LOLv1/Train/input
+    dataroot_GT: dataset/LSRW/Training data/Huawei/high
+    dataroot_LQ: dataset/LSRW/Training data/Huawei/low
 
     n_workers: 3  # per GPU
     batch_size: 4
@@ -25,8 +25,8 @@ datasets:
     color: RGB
   val:
     name: ll_dataset
-    dataroot_GT: dataset/LOLv1/Test/target
-    dataroot_LQ: dataset/LOLv1/Test/target
+    dataroot_GT: dataset/LSRW/Eval/Huawei/high
+    dataroot_LQ: dataset/LSRW/Eval/Huawei/low
     train_size: [600, 400]
 
 #### network structures
@@ -36,7 +36,7 @@ network_G:
 
 #### path
 path:
-  root: save_new/LOL_v1
+  root: save_new/LSRW_Huawei
   # resume_state: newexperiments/experiments/train/training_state/93000.state
   pretrain_model_G:
   log:
