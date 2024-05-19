@@ -2,25 +2,16 @@ import functools
 import models.archs.arch_util as arch_util
 from models.archs.SFBlock import *
 from models.archs.FSIB import FuseBlock
-import kornia
 import torch.nn.functional as F
 from models.archs.myblock import FSAIO
 from models.archs.torch_rgbto import rgb_to_ycbcr, ycbcr_to_rgb
 from models.fno.fnonet import FNO2d, Fnounet
 from math import floor
-###############################
-# 参数增强版
+
 
 class FourLLIE_fno(nn.Module):
     def __init__(self, nf=64):
         super(FourLLIE_fno, self).__init__()
-
-        # AMPLITUDE ENHANCEMENT
-        # self.AmpNet = nn.Sequential(
-        #     AmplitudeNet_skip(8),
-        #     nn.Sigmoid()
-        # )
-
         self.nf = nf
         self.fnonet_1 = nn.Sequential(
             nn.Conv2d(3, nf, 1, 1, 0),
@@ -61,26 +52,6 @@ class FourLLIE_fno(nn.Module):
         self.fsaio6 = FSAIO(nc=nf)
         self.fsaio7 = FSAIO(nc=nf)
 
-    def get_mask(self, dark):
-
-        light = kornia.filters.gaussian_blur2d(dark, (5, 5), (1.5, 1.5))
-        dark = dark[:, 0:1, :, :] * 0.299 + dark[:, 1:2, :, :] * 0.587 + dark[:, 2:3, :, :] * 0.114
-        light = light[:, 0:1, :, :] * 0.299 + light[:, 1:2, :, :] * 0.587 + light[:, 2:3, :, :] * 0.114
-        noise = torch.abs(dark - light)
-
-        mask = torch.div(light, noise + 0.0001)
-
-        batch_size = mask.shape[0]
-        height = mask.shape[2]
-        width = mask.shape[3]
-        mask_max = torch.max(mask.view(batch_size, -1), dim=1)[0]
-        mask_max = mask_max.view(batch_size, 1, 1, 1)
-        mask_max = mask_max.repeat(1, 1, height, width)
-        mask = mask * 1.0 / (mask_max + 0.0001)
-
-        mask = torch.clamp(mask, min=0, max=1.0)
-        return mask.float()
-
     def forward(self, x):
 
         _, _, H, W = x.shape
@@ -111,10 +82,6 @@ class FourLLIE_fno(nn.Module):
         L1_fea_3 = self.lrelu(self.conv_first_3(L1_fea_2))
 
         fea = self.feature_extraction(L1_fea_3)
-        # # 这里得到了Fspatail
-        # fea_light = self.recon_trunk_light(fea)
-        # # 这里得到F_fourier
-        # fea_unfold = self.transformer(fea)
         fea_fre, fea_spa = self.fsaio1(fea, fea)
         fea_fre, fea_spa = self.fsaio2(fea_fre, fea_spa)
         fea_fre, fea_spa = self.fsaio3(fea_fre, fea_spa)
@@ -125,13 +92,7 @@ class FourLLIE_fno(nn.Module):
 
         h_feature = fea.shape[2]
         w_feature = fea.shape[3]
-        mask = self.get_mask(x_center)
-        mask = F.interpolate(mask, size=[h_feature, w_feature], mode='nearest')
 
-        channel = fea.shape[1]
-        mask = mask.repeat(1, channel, 1, 1)
-
-        # fea = fea_fre * (1 - mask) + fea_spa * mask
         fea = fea_spa
 
         out_noise = self.recon_trunk(fea) # nf
